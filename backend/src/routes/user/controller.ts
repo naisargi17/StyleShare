@@ -5,6 +5,7 @@ import {
   otpVerificationSchema,
   signinBodySchema,
   signupBodySchema,
+  googleSchema
 } from "./zodSchema";
 import { createHash, validatePassword } from "../../helpers/hash";
 import { createJWT } from "../../helpers/jwt";
@@ -14,6 +15,79 @@ import { sendVerificationEmail } from "../../helpers/mail/sendOtpMail";
 import { sendWelcomeEmail } from "../../helpers/mail/sendWelcomeMail";
 import { date } from "zod";
 import{ mailing} from "../../helpers/mail/ContactUsMail";
+
+export const google = async (req: Request, res: Response) => {
+  try {
+    const payload = req.body;
+    const result = googleSchema.safeParse(payload);
+
+    if (!result.success) {
+      const formattedError: any = {};
+      result.error.errors.forEach((e) => {
+        formattedError[e.path[0]] = e.message;
+      });
+      return res.status(400).json({
+        error: { ...formattedError, message: "Validation failed" },
+      });
+    }
+
+    const data = result.data;
+
+    const user = await prisma.user.findFirst({
+      where: {
+        email: data.email,
+      },
+    });
+
+    if (user) {
+      const token = createJWT({
+        id: user.id,
+      });
+      return res.status(200).json({
+        message: "User logged in successfully.",
+        token: token,
+      });
+    } else {
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+      const passwordHash = await createHash(generatedPassword);
+
+      const newUser = await prisma.user.create({
+        data: {
+          username: data.displayname,
+          passwordHash,
+          email: data.email,
+        },
+        select: {
+          id: true,
+          email: true,
+          username: true,
+        },
+      });
+
+      await sendWelcomeEmail(data.email, data.displayname);
+
+      const token = createJWT({
+        id: newUser.id,
+      });
+
+      return res.status(201).json({
+        message: "User registered and logged in successfully.",
+        token: token,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: {
+        message: "An unexpected exception occurred!",
+      },
+    });
+  }
+};
+
+
 export const userSignupController = async (req: Request, res: Response) => {
   try {
     const payload = req.body;

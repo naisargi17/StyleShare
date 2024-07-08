@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faCircle } from "@fortawesome/free-solid-svg-icons";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
+import OAuth from "../components/OAuth";
 import bgHero from "../assets/bgHero.png";
 import CaptchaUser from "../components/CaptchaUser";
 
@@ -255,15 +256,16 @@ const Signup = () => {
                 >
                   {t("register.signup")}
                 </button>
+                <OAuth/>
               </div>
             </form>
             <p className="mt-4 text-sm text-[#000435] bg-white dark:text-white dark:bg-[#000453]">
             {t("register.alAccount")}{" "}
-              <Link to="/app/signin" className="text-blue-500">
+              <Link to="/app/signin" className="text-blue-500 ">
               {t("login.sigin")}
               </Link>
             </p>
-          </div>
+        </div>
         </div>
       </section>
     </div>
