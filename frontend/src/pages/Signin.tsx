@@ -6,6 +6,7 @@ import { tokenState } from "../store/atoms/auth";
 import { AiOutlineEyeInvisible, AiOutlineEye } from "react-icons/ai";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
+import OAuth from "../components/OAuth";
 import bgHero from "../assets/bgHero.png";
 import CaptchaUser from "../components/CaptchaUser";
 
@@ -118,11 +119,12 @@ const Signin = () => {
           <div className="flex justify-center">
           <button
             type="submit"
-            className=" bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+            className=" bg-blue-500 text-white text-xl py-2 px-4 w-full rounded-md hover:bg-blue-600"
           >
             {t("login.sigin")}
           </button>
           </div>
+          <OAuth/>
         </form>
         <p className=" mt-4 text-md text-[#000435] bg-white dark:text-white dark:bg-[#000453]">
         {t("login.noAccount")} -

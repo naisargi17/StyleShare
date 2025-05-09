@@ -1,7 +1,6 @@
 import { Router } from "express";
 import {
   checkFollowStatusController,
-  checkingBlockOrUnblock,
   contactUsController,
   followUserController,
   generateOtpController,
@@ -11,6 +10,7 @@ import {
   userSigninController,
   userSignupController,
   verifyOtpController,
+  google,
   userProfileUpdate
 } from "./controller";
 import authMiddleware from "../../middleware/auth";
@@ -39,6 +39,7 @@ userRouter.post("/:id/unfollow", authMiddleware, unfollowUserController);
 
 userRouter.get("/:id/follow-status", authMiddleware, checkFollowStatusController);
 
-userRouter.get('/checkBlockedOrUnblock',authMiddleware,checkingBlockOrUnblock);
+userRouter.post("/google",google);
+userRouter.get('/checkBlockedOrUnblock',authMiddleware);
 
 export default userRouter;
